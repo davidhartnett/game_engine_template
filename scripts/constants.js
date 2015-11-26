@@ -1,0 +1,9 @@
+
+var CONST =
+{
+	FPS: 60,
+	UPS: 60,
+
+	CANVAS_WIDTH: 640,
+	CANVAS_HEIGHT: 480
+};
