@@ -1,6 +1,5 @@
 // David Hartnett
 // 2015-11-26
-// Requires jQuery
 
 function GameInputState(object)
 {
