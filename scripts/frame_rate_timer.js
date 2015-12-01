@@ -24,7 +24,7 @@ FrameRateTimer.prototype =
 
 		this.total_time_count += interval - this.interval_array[this.interval_array_index];
 		this.interval_array[this.interval_array_index] = interval;
-		this.interval_array_index = this.interval_array_index >= this.frame_number ? 0 : this.interval_array_index + 1;
+		if (++this.interval_array_index >= this.frame_number) this.interval_array_index = 0;
 		this.interval_request_count++;
 		
 		return interval;
