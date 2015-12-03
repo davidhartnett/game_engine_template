@@ -1,26 +1,30 @@
-/* line 1 */
 
-body {
-  font-family: Verdana;
-  font-size: 12pt;
-  text-align: center;
+body
+{
+	font-family: Verdana;
+	font-size: 12pt;
+	text-align: center;
+	// background-color:black;
 }
 
-h1 {
-font-size: 14pt;
+h1
+{
+	font-size: 14pt;
 }
 
-p {
-font-family: Verdana, Arial, Helvetica, sans-serif;
-font-size: 12px;
-color: #000000;
+p
+{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #000000;
 }
 
-canvas {
-padding-left: 0;
-padding-right: 0;
-margin-left: auto;
-margin-right: auto;
-display: block;
-  cursor: crosshair;
+canvas 
+{
+	padding-left: 0;
+	padding-right: 0;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	cursor: crosshair;
 }
