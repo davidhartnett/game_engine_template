@@ -17,9 +17,9 @@ var a =
 	,
 	update: function(interval, input_state, object_collection)
 	{
+		if (!input_state.mouse_state.down) this.c++;
 		if (input_state.mouse_state.down)
 		{
-			this.c++;
 			return "mouse down " + b.c;
 		}
 		else return null;
@@ -35,9 +35,9 @@ var b =
 	,
 	update: function(interval, input_state, object_collection)
 	{
+		if (input_state.mouse_state.down) this.c++;
 		if (!input_state.mouse_state.down)
 		{
-			this.c++;
 			return "mouse up " + a.c;
 		}
 		else return null;
