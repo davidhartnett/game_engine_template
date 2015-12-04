@@ -1,7 +1,7 @@
 // David Hartnett
 // 2015-11-26
 
-function GetGameInputState(object)
+function GetGameInputState(object, canvas)
 {
 	var input_state =
 	{
@@ -55,7 +55,8 @@ function GetGameInputState(object)
 	(
 		function (event_object)
 		{
-			// console.log(event_object);
+			input_state.mouse_state.x = event_object.pageX - canvas.offset().left;
+			input_state.mouse_state.y = event_object.pageY - canvas.offset().top;
 			input_state.mouse_state.event_object = event_object;
 		}
 	);

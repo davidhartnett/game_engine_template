@@ -16,9 +16,8 @@ function GetGame()
 {
 	var state = {self:this, quit:false, debug:true, request_id:null};
 	
-	//var main_context	=	GetContext($(window).height(), $(window).width());
 	var main_context	=	GetContext(CONST.CANVAS_WIDTH, CONST.CANVAS_HEIGHT);
-	var input_state		=	GetGameInputState($(window));
+	var input_state		=	GetGameInputState($(window), $(main_context.canvas));
 	
 	var timer			=	GetFrameRateTimer(CONST.FPS);
 	var background		=	GetBackground(CONST.CANVAS_WIDTH, CONST.CANVAS_HEIGHT, CONST.CANVAS_BACKGROUND_COLOR);

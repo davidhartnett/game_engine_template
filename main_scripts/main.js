@@ -6,6 +6,20 @@
 var main_game = GetGame();
 main_game.run();
 
+var m =
+{
+	c: 0
+	,
+	draw: function(){ return; }
+	,
+	update: function(interval, input_state, object_collection)
+	{
+		return ["x: " + input_state.mouse_state.x, "y: " + input_state.mouse_state.y];
+		// return null;
+	}
+};
+
+main_game.add_object(m);
 
 // basic case shows how objects can communicate data internally without any assistance from the display engine
 
