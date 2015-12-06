@@ -14,7 +14,8 @@ function GetGameInputState(object, canvas)
 			event_object: null
 		},
 		key_down_functions: [],
-		key_up_functions: []
+		key_up_functions: [],
+		mouse_down_functions: []
 	};
 
 	object.keydown
@@ -40,6 +41,7 @@ function GetGameInputState(object, canvas)
 		function (event_object)
 		{
 			input_state.mouse_state.down = true;
+			if (input_state.mouse_down_functions[event.which]) for (var i in input_state.mouse_down_functions[event.which]) input_state.mouse_down_functions[event.which][i]();
 		}
 	);
 

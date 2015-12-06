@@ -12,15 +12,15 @@ window.requestAnimFrame = (function () {
 }
 )();
 
-function GetGame()
+function GetGame(canvas_width, canvas_height)
 {
 	var state = {self:this, quit:false, debug:true, request_id:null};
 	
-	var main_context	=	GetContext(CONST.CANVAS_WIDTH, CONST.CANVAS_HEIGHT);
+	var main_context	=	GetContext(canvas_width, canvas_height);
 	var input_state		=	GetGameInputState($(window), $(main_context.canvas));
 	
 	var timer			=	GetFrameRateTimer(CONST.FPS);
-	var background		=	GetBackground(CONST.CANVAS_WIDTH, CONST.CANVAS_HEIGHT, CONST.CANVAS_BACKGROUND_COLOR);
+	var background		=	GetBackground(canvas_width, canvas_height, CONST.CANVAS_BACKGROUND_COLOR);
 	var debug_object	=	GetDebugger(10, 10, 10, CONST.CANVAS_TEXT_COLOR);
 	
 	input_state.key_down_functions[CONST.KEY_DOWN_CODES["q"]]	= [ function() { state.quit = true; } ];
