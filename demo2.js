@@ -49,7 +49,7 @@ function GetParticle(x,y,dx,dy,color,size)
 }
 
 var p = [];
-for (var i = 0; i < PARTICLE_NUM; i++) p[i] = GetParticle(20 + 40*(i%32), 20 + 20*Math.floor(i/32), 0.0, 0.0, "green", 2);
+for (var i = 0; i < PARTICLE_NUM; i++) p[i] = GetParticle(20 + 40*(i%32), 20 + 20*Math.floor(i/32), 0.1, 0.0, "green", 2);
 
 function GetGravityObject(x,y,dx,dy,mass,color,radius,particle_collection)
 {
