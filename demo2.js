@@ -5,7 +5,12 @@
 
 "use strict";
 
-var WIDTH = 1280, HEIGHT = 480, PARTICLE_NUM = 32*24, FRICTION = 0.995;
+var		WIDTH = 1280
+,		HEIGHT = 480
+//,		PARTICLE_NUM = 32*24
+,		PARTICLE_NUM = 100
+// ,		FRICTION = 0.995;
+,		FRICTION = 0.999;
 
 var main_game = GetGame(WIDTH, HEIGHT);
 main_game.run();
@@ -49,7 +54,8 @@ function GetParticle(x,y,dx,dy,color,size)
 }
 
 var p = [];
-for (var i = 0; i < PARTICLE_NUM; i++) p[i] = GetParticle(20 + 40*(i%32), 20 + 20*Math.floor(i/32), 0.1, 0.0, "green", 2);
+// for (var i = 0; i < PARTICLE_NUM; i++) p[i] = GetParticle(20 + 40*(i%32), 20 + 20*Math.floor(i/32), 0.1, 0.0, "green", 4);
+for (var i = 0; i < PARTICLE_NUM; i++) p[i] = GetParticle(20 + 5*i, 40, 0.2, 0.0, "green", 4);
 
 function GetGravityObject(x,y,dx,dy,mass,color,radius,particle_collection)
 {
@@ -113,8 +119,8 @@ function GetGravityObject(x,y,dx,dy,mass,color,radius,particle_collection)
 
 
 for (var i = 0; i < PARTICLE_NUM; i++) main_game.add_object(p[i]);
-var g1 = GetGravityObject(500, 200, 0,0, 20, "green", 20, p);
-var g2 = GetGravityObject(800, 400,  0,0, 20, "blue", 20, p);
+var g1 = GetGravityObject(700, 150, 0,0, 10, "green", 30, p);
+var g2 = GetGravityObject(800, 400,  0,0, 10, "blue", 30, p);
 main_game.add_object(g1);
 main_game.add_object(g2);
 
