@@ -54,7 +54,7 @@ function GetParticle(x,y,dx,dy,color,size)
 }
 
 var p = [];
-// for (var i = 0; i < PARTICLE_NUM; i++) p[i] = GetParticle(20 + 40*(i%32), 20 + 20*Math.floor(i/32), 0.1, 0.0, "green", 4);
+for (var i = 0; i < PARTICLE_NUM; i++) p[i] = GetParticle(20 + 40*(i%32), 20 + 20*Math.floor(i/32), 0.1, 0.0, "green", 4);
 for (var i = 0; i < PARTICLE_NUM; i++) p[i] = GetParticle(20 + 5*i, 40, 0.2, 0.0, "green", 4);
 
 function GetGravityObject(x,y,dx,dy,mass,color,radius,particle_collection)
@@ -107,7 +107,6 @@ function GetGravityObject(x,y,dx,dy,mass,color,radius,particle_collection)
 			context.fill();
 			context.lineWidth = 1;
 			context.strokeStyle = 1;
-			//canvas.strokeStyle = "transparent";
 			context.stroke();
 			
 			context.restore();
@@ -117,11 +116,7 @@ function GetGravityObject(x,y,dx,dy,mass,color,radius,particle_collection)
 	return gravity_object;
 }
 
-
 for (var i = 0; i < PARTICLE_NUM; i++) main_game.add_object(p[i]);
-var g1 = GetGravityObject(700, 150, 0,0, 10, "green", 30, p);
-var g2 = GetGravityObject(800, 400,  0,0, 10, "blue", 30, p);
-main_game.add_object(g1);
-main_game.add_object(g2);
+main_game.add_object(GetGravityObject(WIDTH/2, HEIGHT/2,  0,0, 10, "blue", 30, p));
 
 
