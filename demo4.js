@@ -53,6 +53,7 @@ function GetMetropolis(x,y,size,temperature)
 				
 				if (e_diff <= 0) m[i][j] = -m[i][j];
 				else if (Math.random() < Math.exp(-e_diff/this.temperature)) m[i][j] = -m[i][j];
+				
 				iterations++;
 			}
 			
@@ -66,16 +67,13 @@ function GetMetropolis(x,y,size,temperature)
 					image_array[index] = image_array[index+1] = image_array[index+2] = color;
 				}
 			}
-			return ["Iterations: " + iterations, "Total iterations: " + this.total_iterations];
+			return ["Update iterations: " + iterations, "Total iterations: " + this.total_iterations, "Temperature: " + this.temperature];
 		}
 	,	draw: function(context)
 		{
 			context.save();
 			
-			context.fillStyle = "black";
-			context.fillText("Temperature: " + this.temperature, this.x, this.y);
-			
-			context.putImageData(m_image, this.x, this.y + 10);
+			context.putImageData(m_image, this.x, this.y);
 			
 			context.restore();
 			return;
@@ -84,7 +82,7 @@ function GetMetropolis(x,y,size,temperature)
 	return metropolis_object;
 }
 
-var mo = GetMetropolis(120,120,240,2)
+var mo = GetMetropolis(120,120,240,2.5)
 
 var temperature_slider = $('<input type="range" id="temperature_slider" min="0" max="500" step="1" value="200"  oninput="console.log(this.value/100); mo.temperature = this.value/100;" />');
 temperature_slider.appendTo("body");
