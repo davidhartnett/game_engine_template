@@ -4,13 +4,15 @@
 
 "use strict";
 
-var		WIDTH = 480
-,		HEIGHT = 480
+var		WIDTH = 640
+,		HEIGHT = 640
+,		GRID_SIZE = 480
+,		PIXEL_SIZE = 2
 ;
 
 var main_game = GetGame(WIDTH, HEIGHT);
 
-function GetMetropolis(x,y,size,temperature)
+function GetMetropolis(x,y,size,pixel_size,temperature)
 {
 	var m = [];
 	for (var i = 0; i < size; i++)
@@ -27,19 +29,25 @@ function GetMetropolis(x,y,size,temperature)
 	}
 	var m_image = new ImageData(image_array,size,size);
 	
+	var draw_canvas = $("<canvas>").attr("width", size).attr("height", size)[0];
+	
+	var update_time = 0;
+	
 	var metropolis_object = 
 	{
 		temperature: temperature
 	,	x: x
 	,	y: y
-	,	length: length
 	,	total_iterations: 0
 	,	update: function(interval, input_state, object_collection)
 		{
-			var then = Date.now()
-			
 			var iterations = 0;
-			while( Date.now() - then < interval/2)
+			var iteration_max = size*size/10;			// hitting ~10% of the grid per run seems reasonable but this is entirely arbitrary
+			
+			var then = Date.now();
+			
+			// metropolis algorithm
+			while(iterations < iteration_max)
 			{
 				var i = Math.floor(Math.random()*size);
 				var j = Math.floor(Math.random()*size);
@@ -59,6 +67,7 @@ function GetMetropolis(x,y,size,temperature)
 			
 			this.total_iterations += iterations;
 			
+			// set the image array for proper representation
 			for (var i = 0; i < size; i++) {
 				for (var j = 0; j < size; j++)
 				{
@@ -67,13 +76,28 @@ function GetMetropolis(x,y,size,temperature)
 					image_array[index] = image_array[index+1] = image_array[index+2] = color;
 				}
 			}
-			return ["Update iterations: " + iterations, "Total iterations: " + this.total_iterations, "Temperature: " + this.temperature];
+			
+			update_time = Date.now() - then;
+			
+			return ["Update iterations: " + iterations, "Total iterations: " + this.total_iterations, "Temperature: " + this.temperature, "Update time: " + update_time];
 		}
 	,	draw: function(context)
 		{
 			context.save();
+		
+			draw_canvas.getContext("2d").putImageData(m_image, 0, 0);
+			context.translate(this.x, this.y);
+			context.scale(pixel_size, pixel_size);
+			context.drawImage(draw_canvas, 0, 0);
 			
-			context.putImageData(m_image, this.x, this.y);
+			// context.putImageData(m_image, this.x, this.y);
+			// for (var i = 0; i < size; i++) {
+				// for (var j = 0; j < size; j++)
+				// {
+					// context.fillStyle = m[i][j] > 0 ? "black" : "white";
+					// context.fillRect(x+i,x+j, 1, 1);
+				// }
+			// }
 			
 			context.restore();
 			return;
@@ -82,13 +106,18 @@ function GetMetropolis(x,y,size,temperature)
 	return metropolis_object;
 }
 
-var mo = GetMetropolis(120,120,240,2.5)
+var mo = GetMetropolis(80,80,GRID_SIZE/PIXEL_SIZE,PIXEL_SIZE,2.5)
+var mo_id = main_game.add_object(mo);
+console.log(mo_id);
 
-var temperature_slider = $('<input type="range" id="temperature_slider" min="0" max="500" step="1" value="200"  oninput="console.log(this.value/100); mo.temperature = this.value/100;" />');
-temperature_slider.appendTo("body");
-
-main_game.add_object(mo);
+var sliders = $(
+'<label for="temperature_slider">Temperature</label> \
+<input type="range" id="temperature_slider" min="0" max="500" step="1" value="200"  oninput="mo.temperature = this.value/100;" /> \
+<label for="size_slider">Size</label> \
+<input type="range" id="size_slider" min="1" max="4" step="1" value="2"  oninput="main_game.remove_object(mo_id); mo = GetMetropolis(80,80,GRID_SIZE/this.value,this.value,2.5); mo_id = main_game.add_object(mo);console.log(mo_id);" /> \
+'
+);
+sliders.appendTo("body");
 
 
 main_game.run();
-

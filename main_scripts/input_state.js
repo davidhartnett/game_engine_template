@@ -38,7 +38,7 @@ function GetGameInputState(object, canvas)
 
 	object.mousedown
 	(
-		function (event_object)
+		function (event)
 		{
 			input_state.mouse_state.down = true;
 			if (input_state.mouse_down_functions[event.which]) for (var i in input_state.mouse_down_functions[event.which]) input_state.mouse_down_functions[event.which][i]();
@@ -47,7 +47,7 @@ function GetGameInputState(object, canvas)
 
 	object.mouseup
 	(
-		function (event_object)
+		function (event)
 		{
 			input_state.mouse_state.down = false;
 		}

@@ -54,6 +54,12 @@ function GetGame(canvas_width, canvas_height)
 		add_object: function(object)
 		{
 			object_collection.push(object);
+			return object_collection.length - 1;
+		}
+		,
+		remove_object: function(object_id)
+		{
+			return object_collection.splice(object_id,1);
 		}
 	};
 	return game;
