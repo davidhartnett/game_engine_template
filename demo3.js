@@ -82,7 +82,7 @@ function GetGravityField(x,y,width,height,strength,particle_collection)
 		{
 			for (var i in particle_collection)
 			{
-				particle_collection[i].dy += strength;
+				particle_collection[i].dy += strength*interval;
 			}
 		}
 	,	draw: function(context)
@@ -132,8 +132,8 @@ function GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_poi
 				var vj = (this.p[i].y - this.p[i-1].y);
 				var vm = Math.sqrt(vi*vi + vj*vj);
 				var vdel = vm - distance;
-				var dx = spring_constant*vdel*vi/vm;
-				var dy = spring_constant*vdel*vj/vm;
+				var dx = interval*spring_constant*vdel*vi/vm;
+				var dy = interval*spring_constant*vdel*vj/vm;
 				this.p[i-1].dx	+= dx;
 				this.p[i-1].dy	+= dy;
 				this.p[i].dx	-= dx;
@@ -178,8 +178,8 @@ function GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_poi
 }
 
 // GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_points)
-var s1 = GetString(150,50,0,0,10,0.05,30,"red",2,{0:{x:150, y:50}});
-var gf1 = GetGravityField(0, 0, WIDTH/2, HEIGHT, 0.001, s1.p);
+var s1 = GetString(150,50,0,0,4,0.0035,30,"red",2,{0:{x:150, y:50}});
+var gf1 = GetGravityField(0, 0, WIDTH/2, HEIGHT, 0.0002, s1.p);
 // var gf2 = GetGravityField(3*WIDTH/4, 0, WIDTH/4, HEIGHT, 0.01, s1.p);
 
 // var s2 = GetString(50,50,0.10,0.01,4,0.002,160,"green",2,{0:{x:50, y:50}, 159:{x:690, y:50}});
