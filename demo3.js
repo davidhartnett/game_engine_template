@@ -126,6 +126,13 @@ function GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_poi
 				this.p[i].x += this.p[i].dx*interval;
 				this.p[i].y += this.p[i].dy*interval;				
 			}
+			
+			for (var i in fixed_points)
+			{
+				this.p[i].x = fixed_points[i].x;
+				this.p[i].y = fixed_points[i].y;
+			}
+			
 			for (var i = 1; i < count; i++)
 			{
 				var vi = (this.p[i].x - this.p[i-1].x);
@@ -145,11 +152,6 @@ function GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_poi
 				this.p[i].dy = FRICTION*this.p[i].dy;
 			}
 			
-			for (var i in fixed_points)
-			{
-				this.p[i].x = fixed_points[i].x;
-				this.p[i].y = fixed_points[i].y;
-			}
 			
 			return r;
 		}
@@ -158,16 +160,20 @@ function GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_poi
 			context.save();
 			
 			context.beginPath();
-			context.moveTo(this.p[0].x, this.p[0].y);
-			for (var i = 1; i < count; i++)
-			{
-				context.lineTo(this.p[i].x, this.p[i].y);
-			}
-
+			
 			context.lineWidth = size;
 			context.strokeStyle = color;
+			context.fillStyle = color;
+			
+			//context.moveTo(this.p[0].x, this.p[0].y);
+			for (var i = 0; i < count; i++)
+			{
+				//context.lineTo(this.p[i].x, this.p[i].y);
+				context.fillRect(this.p[i].x, this.p[i].y, size, size);
+			}
 
-			context.stroke();
+
+			//context.stroke();
 
 
 			context.restore();
@@ -178,19 +184,19 @@ function GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_poi
 }
 
 // GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_points)
-var s1 = GetString(150,50,0,0,4,0.0035,30,"red",2,{0:{x:150, y:50}});
+var s1 = GetString(150,50,0,0,4,0.0035,60,"red",3,{0:{x:150, y:50}});
 var gf1 = GetGravityField(0, 0, WIDTH/2, HEIGHT, 0.0002, s1.p);
 // var gf2 = GetGravityField(3*WIDTH/4, 0, WIDTH/4, HEIGHT, 0.01, s1.p);
 
 // var s2 = GetString(50,50,0.10,0.01,4,0.002,160,"green",2,{0:{x:50, y:50}, 159:{x:690, y:50}});
-var s2 = GetString(0,50,0,0,WIDTH/40,0.002,41,"green",2,{0:{x:0, y:50}, 20:{x:WIDTH/2, y:50}, 40:{x:WIDTH, y:50}});
+var s2 = GetString(0,50,0,0,WIDTH/80,0.002,81,"green",4,{0:{x:0, y:50}, 40:{x:WIDTH/2, y:50}, 80:{x:WIDTH, y:50}});
 
 main_game.add_object(s1);
 main_game.add_object(s2);
 main_game.add_object(gf1);
 // main_game.add_object(gf2);
-main_game.add_object(GetGravityObject(WIDTH/4, 3*HEIGHT/4, 0,0, 10, "green", 30, s2.p));
-main_game.add_object(GetGravityObject(3*WIDTH/4, 3*HEIGHT/4,  0,0, 10, "blue", 30, s2.p));
+main_game.add_object(GetGravityObject(WIDTH/4, 3*HEIGHT/4, 0,0, 20, "green", 30, s2.p));
+main_game.add_object(GetGravityObject(3*WIDTH/4, 3*HEIGHT/4,  0,0, 60, "blue", 30, s2.p));
 
 main_game.run();
 
