@@ -196,7 +196,7 @@ main_game.add_object(s2);
 main_game.add_object(gf1);
 // main_game.add_object(gf2);
 main_game.add_object(GetGravityObject(WIDTH/4, 3*HEIGHT/4, 0,0, 20, "green", 30, s2.p));
-main_game.add_object(GetGravityObject(3*WIDTH/4, 3*HEIGHT/4,  0,0, 60, "blue", 30, s2.p));
+main_game.add_object(GetGravityObject(3*WIDTH/4, 3*HEIGHT/4,  0,0, 100, "blue", 30, s2.p));
 
 main_game.run();
 
