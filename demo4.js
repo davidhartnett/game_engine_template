@@ -114,7 +114,7 @@ var sliders = $(
 '<label for="temperature_slider">Temperature</label> \
 <input type="range" id="temperature_slider" min="0" max="1000" step="1" value="200"  oninput="mo.temperature = this.value/100;" /> \
 <label for="size_slider">Size</label> \
-<input type="range" id="size_slider" min="1" max="4" step="1" value="2"  oninput="main_game.remove_object(mo_id); mo = GetMetropolis(80,80,GRID_SIZE/this.value,this.value,2.5); mo_id = main_game.add_object(mo);console.log(mo_id);" /> \
+<input type="range" id="size_slider" min="1" max="4" step="1" value="2"  oninput="var temperature = mo.temperature; main_game.remove_object(mo_id); mo = GetMetropolis(80,80,GRID_SIZE/this.value,this.value,temperature); mo_id = main_game.add_object(mo);console.log(mo_id);" /> \
 '
 );
 sliders.appendTo("body");
