@@ -192,17 +192,19 @@ var gf1 = GetGravityField(0, 0, WIDTH/2, HEIGHT, 0.0002, s1.p.concat(s3.p).conca
 // var gf2 = GetGravityField(3*WIDTH/4, 0, WIDTH/4, HEIGHT, 0.01, s1.p);
 
 
-var s5 = GetString(s2.p[60].x,s2.p[60].y,0,0,4,0.0035,10,"purple",3,{0:s2.p[60]});
+var s5 = GetString(s2.p[60].x,s2.p[60].y,0,0,6,0.0035,10,"purple",3,{0:s2.p[60]});
+var s6 = GetString(s2.p[65].x,s2.p[65].y,0,0,6,0.0035,10,"purple",3,{0:s2.p[65]});
 
 main_game.add_object(s1);
 main_game.add_object(s2);
 main_game.add_object(s3);
 main_game.add_object(s4);
 main_game.add_object(s5);
+main_game.add_object(s6);
 main_game.add_object(gf1);
 // main_game.add_object(gf2);
-main_game.add_object(GetGravityObject(WIDTH/4, 3*HEIGHT/4, 0,0, 20, "green", 30, s2.p.concat(s5.p)));
-main_game.add_object(GetGravityObject(3*WIDTH/4, 3*HEIGHT/4,  0,0, 100, "blue", 30, s2.p.concat(s5.p)));
+main_game.add_object(GetGravityObject(WIDTH/4, 3*HEIGHT/4, 0,0, 20, "green", 30, s2.p.concat(s5.p).concat(s6.p)));
+main_game.add_object(GetGravityObject(3*WIDTH/4, 3*HEIGHT/4,  0,0, 100, "blue", 30, s2.p.concat(s5.p).concat(s6.p)));
 
 main_game.run();
 
