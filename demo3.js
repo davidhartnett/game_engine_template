@@ -183,24 +183,26 @@ function GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_poi
 	return string;
 }
 
+var s2 = GetString(0,50,0,0,WIDTH/80,0.002,81,"green",4,{0:{x:0, y:50}, 40:{x:WIDTH/2, y:50}, 80:{x:WIDTH, y:50}});
 // GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_points)
-var s1 = GetString(150,50,0,0,4,0.0035,50,"red",3,{0:{x:150, y:50}});
+var s1 = GetString(s2.p[10].x,s2.p[10].y,0,0,4,0.0035,50,"red",3,{0:s2.p[10]});
 var s3 = GetString(350,50,0,0,5,0.0035,40,"blue",3,{0:{x:350, y:50}});
 var s4 = GetString(550,50,0,0,10,0.0035,20,"purple",3,{0:{x:550, y:50}});
 var gf1 = GetGravityField(0, 0, WIDTH/2, HEIGHT, 0.0002, s1.p.concat(s3.p).concat(s4.p));
 // var gf2 = GetGravityField(3*WIDTH/4, 0, WIDTH/4, HEIGHT, 0.01, s1.p);
 
-// var s2 = GetString(50,50,0.10,0.01,4,0.002,160,"green",2,{0:{x:50, y:50}, 159:{x:690, y:50}});
-var s2 = GetString(0,50,0,0,WIDTH/80,0.002,81,"green",4,{0:{x:0, y:50}, 40:{x:WIDTH/2, y:50}, 80:{x:WIDTH, y:50}});
+
+var s5 = GetString(s2.p[60].x,s2.p[60].y,0,0,4,0.0035,10,"purple",3,{0:s2.p[60]});
 
 main_game.add_object(s1);
 main_game.add_object(s2);
 main_game.add_object(s3);
 main_game.add_object(s4);
+main_game.add_object(s5);
 main_game.add_object(gf1);
 // main_game.add_object(gf2);
-main_game.add_object(GetGravityObject(WIDTH/4, 3*HEIGHT/4, 0,0, 20, "green", 30, s2.p));
-main_game.add_object(GetGravityObject(3*WIDTH/4, 3*HEIGHT/4,  0,0, 100, "blue", 30, s2.p));
+main_game.add_object(GetGravityObject(WIDTH/4, 3*HEIGHT/4, 0,0, 20, "green", 30, s2.p.concat(s5.p)));
+main_game.add_object(GetGravityObject(3*WIDTH/4, 3*HEIGHT/4,  0,0, 100, "blue", 30, s2.p.concat(s5.p)));
 
 main_game.run();
 
