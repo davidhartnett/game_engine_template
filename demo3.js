@@ -165,15 +165,15 @@ function GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_poi
 			context.strokeStyle = color;
 			context.fillStyle = color;
 			
-			//context.moveTo(this.p[0].x, this.p[0].y);
+			// context.moveTo(this.p[0].x, this.p[0].y);
 			for (var i = 0; i < count; i++)
 			{
-				//context.lineTo(this.p[i].x, this.p[i].y);
+				// context.lineTo(this.p[i].x, this.p[i].y);
 				context.fillRect(this.p[i].x, this.p[i].y, size, size);
 			}
 
 
-			//context.stroke();
+			// context.stroke();
 
 
 			context.restore();
@@ -185,7 +185,9 @@ function GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_poi
 
 // GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_points)
 var s1 = GetString(150,50,0,0,4,0.0035,60,"red",3,{0:{x:150, y:50}});
-var gf1 = GetGravityField(0, 0, WIDTH/2, HEIGHT, 0.0002, s1.p);
+var s3 = GetString(350,50,0,0,4,0.0035,40,"blue",3,{0:{x:350, y:50}});
+var s4 = GetString(550,50,0,0,4,0.0035,20,"purple",3,{0:{x:550, y:50}});
+var gf1 = GetGravityField(0, 0, WIDTH/2, HEIGHT, 0.0002, s1.p.concat(s3.p).concat(s4.p));
 // var gf2 = GetGravityField(3*WIDTH/4, 0, WIDTH/4, HEIGHT, 0.01, s1.p);
 
 // var s2 = GetString(50,50,0.10,0.01,4,0.002,160,"green",2,{0:{x:50, y:50}, 159:{x:690, y:50}});
@@ -193,6 +195,8 @@ var s2 = GetString(0,50,0,0,WIDTH/80,0.002,81,"green",4,{0:{x:0, y:50}, 40:{x:WI
 
 main_game.add_object(s1);
 main_game.add_object(s2);
+main_game.add_object(s3);
+main_game.add_object(s4);
 main_game.add_object(gf1);
 // main_game.add_object(gf2);
 main_game.add_object(GetGravityObject(WIDTH/4, 3*HEIGHT/4, 0,0, 20, "green", 30, s2.p));
