@@ -184,9 +184,9 @@ function GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_poi
 }
 
 // GetString(x,y,dx,dy,distance,spring_constant,count,color,size,fixed_points)
-var s1 = GetString(150,50,0,0,4,0.0035,60,"red",3,{0:{x:150, y:50}});
-var s3 = GetString(350,50,0,0,4,0.0035,40,"blue",3,{0:{x:350, y:50}});
-var s4 = GetString(550,50,0,0,4,0.0035,20,"purple",3,{0:{x:550, y:50}});
+var s1 = GetString(150,50,0,0,4,0.0035,50,"red",3,{0:{x:150, y:50}});
+var s3 = GetString(350,50,0,0,5,0.0035,40,"blue",3,{0:{x:350, y:50}});
+var s4 = GetString(550,50,0,0,10,0.0035,20,"purple",3,{0:{x:550, y:50}});
 var gf1 = GetGravityField(0, 0, WIDTH/2, HEIGHT, 0.0002, s1.p.concat(s3.p).concat(s4.p));
 // var gf2 = GetGravityField(3*WIDTH/4, 0, WIDTH/4, HEIGHT, 0.01, s1.p);
 
