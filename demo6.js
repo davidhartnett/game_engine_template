@@ -110,11 +110,11 @@ function GetZipDistrictObject(zip_object, flips)
 	
 	var district_object = 
 	{
-		total_population:0
-	,	ideal_population_per_district:0
-	,	district_counts: []
-	,	district_populations: []
-	,	district_tot_distances: []
+		total_population:				0
+	,	ideal_population_per_district:	0
+	,	district_counts:				[]
+	,	district_populations:			[]
+	,	district_tot_distances:			[]
 	,	go_flag: false
 	,	draw: function(context)
 		{
@@ -176,10 +176,11 @@ function GetZipDistrictObject(zip_object, flips)
 				log_array.push(avgn1.toFixed(2) + " " + avgn2.toFixed(2) + " " + avgo1.toFixed(2) + " " + avgo2.toFixed(2) );
 				
 				if (avgn1 < avgo1 && avgn2 < avgo2)
+				// if (avgn1 < avgo1 || avgn2 < avgo2)
 				{
 					condition_flag = true;
 				}
-				// else if (Math.random() < 0.99) condition_flag = true;	
+				else if (Math.random() < 0.01) condition_flag = true;	
 								
 				if (condition_flag)
 				{
@@ -320,7 +321,7 @@ var state = "OK";
 var districts = 5;
 
 var zip_obj = GetZipObject(state, districts);
-var district_obj = GetZipDistrictObject(zip_obj, 40);
+var district_obj = GetZipDistrictObject(zip_obj, 60);
 var map = GetZipMapObject(zip_obj,.9,7,30);
 
 main_game.add_object(map);
