@@ -110,12 +110,14 @@ function GetZipDistrictObject(zip_object, flips)
 	
 	var district_object = 
 	{
-		total_population:				0
+		temperature:					1
+	,	total_population:				0
 	,	ideal_population_per_district:	0
 	,	district_counts:				[]
 	,	district_populations:			[]
 	,	district_tot_distances:			[]
-	,	go_flag: false
+	,	go_flag:						false
+	,	stats:							{counter:0,e_diff_tot:0,n_diff_tot:0, numerator_tot:0}
 	,	draw: function(context)
 		{
 			return;
@@ -173,14 +175,36 @@ function GetZipDistrictObject(zip_object, flips)
 				var avgo1 = 2*this.district_tot_distances[district_one]/(No1*(No1-1));
 				var avgo2 = 2*this.district_tot_distances[district_two]/(No2*(No2-1));
 				
-				log_array.push(avgn1.toFixed(2) + " " + avgn2.toFixed(2) + " " + avgo1.toFixed(2) + " " + avgo2.toFixed(2) );
+				//log_array.push(avgn1.toFixed(2) + " " + avgn2.toFixed(2) + " " + avgo1.toFixed(2) + " " + avgo2.toFixed(2) );
 				
-				if (avgn1 < avgo1 && avgn2 < avgo2)
-				// if (avgn1 < avgo1 || avgn2 < avgo2)
+				var e_diff = (avgn1 - avgo1) + (avgn2 - avgo2);
+				
+				var n_diff =
+				Math.abs(this.ideal_population_per_district - new_district_populations[district_one]) + Math.abs(this.ideal_population_per_district - new_district_populations[district_two]) 
+				- Math.abs(this.ideal_population_per_district - this.district_populations[district_one]) - Math.abs(this.ideal_population_per_district - this.district_populations[district_two]);
+				
+				
+				var mu = 0.00005;
+				var numerator = e_diff + mu*n_diff;
+				
+				// var numerator = 8000*e_diff + n_diff;
+				
+				//log_array.push(e_diff.toFixed(2) + " " + n_diff.toFixed(2) + " " + numerator.toFixed(2));
+				log_array.push((this.stats.e_diff_tot/this.stats.counter).toFixed(5) + " " + (this.stats.n_diff_tot/this.stats.counter).toFixed(5) + " " + (this.stats.numerator_tot/this.stats.counter).toFixed(5) + " " + this.stats.counter);
+				
+				this.stats.counter++;
+				this.stats.e_diff_tot += e_diff;
+				this.stats.n_diff_tot += n_diff;
+				this.stats.numerator_tot += numerator;
+				//if (avgn1 < avgo1 && avgn2 < avgo2)
+				//if (e_diff <= 0)
+				//if (e_diff <= 0 && n_diff <= 0)
+				if (numerator <= 0)
 				{
 					condition_flag = true;
+					
 				}
-				else if (Math.random() < 0.01) condition_flag = true;	
+				//else if (Math.random() < Math.exp(-numerator/this.temperature)) condition_flag = true;	
 								
 				if (condition_flag)
 				{
@@ -194,7 +218,7 @@ function GetZipDistrictObject(zip_object, flips)
 				}
 			}
 			
-			var ret = ["runs this interval: " + flip_counter, "districts: " + district_number, "total population: " + this.total_population, "ideal average: " + this.ideal_population_per_district];
+			var ret = ["runs per interval: " + flip_counter, "districts: " + district_number, "total population: " + this.total_population, "ideal average: " + this.ideal_population_per_district];
 			ret = ret.concat(this.district_counts).concat(this.district_populations);
 			ret = ret.concat(log_array);
 			
@@ -234,7 +258,7 @@ function GetZipMapObject(zip_object, map_scale_factor, pop_rad_min, pop_rad_max)
 	
 	//var color = "#" + (Math.random()>0.5?"FF":"00")+ (Math.random()>0.5?"FF":"00")+ (Math.random()>0.5?"FF":"00");
 	//var color_arr = ["#FF0000","#00FF00","#0000FF"];
-	var color_arr = ["red", "lime", "blue","yellow", "orange", "purple","green"];
+	var color_arr = ["red", "lime", "blue","yellow", "orange", "purple","green", "slateblue"];
 	
 	zm.x = []; zm.y = []; zm.rad = []; zm.color = [];
 	for (var i = 0; i < zm.zip.length; i++)
@@ -321,7 +345,7 @@ var state = "OK";
 var districts = 5;
 
 var zip_obj = GetZipObject(state, districts);
-var district_obj = GetZipDistrictObject(zip_obj, 60);
+var district_obj = GetZipDistrictObject(zip_obj, 10);
 var map = GetZipMapObject(zip_obj,.9,7,30);
 
 main_game.add_object(map);
