@@ -8,7 +8,6 @@ var		WIDTH = 1200
 
 var main_game = GetGame(WIDTH, HEIGHT);
 
-main_game.run();
 
 // globals 
 
@@ -95,8 +94,29 @@ function GetZipObject (state, district_number)
 	return zip_object;
 }
 
+function GetAverager(points_to_average, avg_val)
+{
+	var a = [];
+	var tot = 0, index = 0;
+	for (var i = 0; i < points_to_average; i++)
+	{
+		a[i] = avg_val;
+		tot += avg_val;
+	}
+	return function(val)
+	{
+		if (val)
+		{
+			tot -= a[index];
+			a[index] = val;
+			tot += a[index];
+			if (++index >= points_to_average) index = 0;
+		}
+		return tot/points_to_average;
+	};
+}
 
-function GetZipDistrictObject(zip_object, flips)
+function GetZipDistrictObject(zip_object, flips, initial_temperature, cooling_schedule, temperature_drop, external_object)
 {
 	var zm = zip_object;
 	
@@ -110,14 +130,19 @@ function GetZipDistrictObject(zip_object, flips)
 	
 	var district_object = 
 	{
-		temperature:					1
+		temperature:					initial_temperature
+	,	cooling_counter:				0
 	,	total_population:				0
 	,	ideal_population_per_district:	0
 	,	district_counts:				[]
 	,	district_populations:			[]
 	,	district_tot_distances:			[]
 	,	go_flag:						false
-	,	stats:							{counter:0,e_diff_tot:0,n_diff_tot:0, numerator_tot:0}
+	//,	stats:							{e_diff_tot:GetAverager(200,0),n_diff_tot:GetAverager(200,0), numerator_tot:GetAverager(200,0)}
+	,	e_diff_avg:						GetAverager(2000,0)
+	,	n_diff_avg:						GetAverager(2000,0)
+	,	numerator_avg:					GetAverager(2000,0)
+	,	district_distance_averages:		[]
 	,	draw: function(context)
 		{
 			return;
@@ -130,6 +155,14 @@ function GetZipDistrictObject(zip_object, flips)
 			var new_district_tot_distances = [];
 			
 			var log_array = [];
+			
+			while (this.cooling_counter >= cooling_schedule)
+			{
+				this.cooling_counter -= cooling_schedule;
+				this.temperature -= temperature_drop;
+				external_object.value = this.temperature;
+				if (this.temperature <= 0) this.temperature = 0;
+			}
 			
 			for (var flip_counter = 0; flip_counter < flips; flip_counter++)
 			{
@@ -146,6 +179,8 @@ function GetZipDistrictObject(zip_object, flips)
 					new_district_populations[i]		= this.district_populations[i];
 					new_district_tot_distances[i]	= this.district_tot_distances[i];
 				}
+				
+				if (new_district_counts[district_one] <= 2) continue;	// can't let this happen...
 				
 				new_district_counts[district_one]		-= 1;
 				new_district_populations[district_one]	-= zm.population[zm_index];
@@ -179,32 +214,43 @@ function GetZipDistrictObject(zip_object, flips)
 				
 				var e_diff = (avgn1 - avgo1) + (avgn2 - avgo2);
 				
+				// var n_diff_one = this.district_populations[district_one] - this.ideal_population_per_district - zm.population[zm_index];
+				// var n_diff_two = this.ideal_population_per_district - this.district_populations[district_two] + zm.population[zm_index];
+				
 				var n_diff =
 				Math.abs(this.ideal_population_per_district - new_district_populations[district_one]) + Math.abs(this.ideal_population_per_district - new_district_populations[district_two]) 
 				- Math.abs(this.ideal_population_per_district - this.district_populations[district_one]) - Math.abs(this.ideal_population_per_district - this.district_populations[district_two]);
-				
-				
-				var mu = 0.00005;
+								
+				// ^^ bad
+				var mu = 0.00002;
 				var numerator = e_diff + mu*n_diff;
+				// also bad ^^. study gibbs energy
 				
 				// var numerator = 8000*e_diff + n_diff;
 				
-				//log_array.push(e_diff.toFixed(2) + " " + n_diff.toFixed(2) + " " + numerator.toFixed(2));
-				log_array.push((this.stats.e_diff_tot/this.stats.counter).toFixed(5) + " " + (this.stats.n_diff_tot/this.stats.counter).toFixed(5) + " " + (this.stats.numerator_tot/this.stats.counter).toFixed(5) + " " + this.stats.counter);
+				if (flip_counter == 0)
+				{
+					log_array.push("avg e_diff: " + this.e_diff_avg(e_diff).toFixed(6));
+					log_array.push("avg n_diff: " + this.n_diff_avg(n_diff).toFixed(6));
+					log_array.push("avg numerator: " + this.numerator_avg(numerator).toFixed(6));
+				}
+				else
+				{
+					this.e_diff_avg(e_diff);
+					this.n_diff_avg(n_diff);
+					this.numerator_avg(numerator);
+				}
 				
-				this.stats.counter++;
-				this.stats.e_diff_tot += e_diff;
-				this.stats.n_diff_tot += n_diff;
-				this.stats.numerator_tot += numerator;
 				//if (avgn1 < avgo1 && avgn2 < avgo2)
 				//if (e_diff <= 0)
 				//if (e_diff <= 0 && n_diff <= 0)
 				if (numerator <= 0)
 				{
 					condition_flag = true;
-					
+					this.district_distance_averages[district_one](avgn1);
+					this.district_distance_averages[district_two](avgn2);
 				}
-				//else if (Math.random() < Math.exp(-numerator/this.temperature)) condition_flag = true;	
+				else if (Math.random() < Math.exp(-numerator/this.temperature)) condition_flag = true;	
 								
 				if (condition_flag)
 				{
@@ -218,8 +264,11 @@ function GetZipDistrictObject(zip_object, flips)
 				}
 			}
 			
-			var ret = ["runs per interval: " + flip_counter, "districts: " + district_number, "total population: " + this.total_population, "ideal average: " + this.ideal_population_per_district];
-			ret = ret.concat(this.district_counts).concat(this.district_populations);
+			this.cooling_counter += flips;
+			
+			var ret = ["runs per interval: " + flip_counter, "districts: " + district_number, "total population: " + this.total_population, "ideal average: " + this.ideal_population_per_district, "temperature: " + this.temperature];
+			ret = ret.concat(this.district_counts).concat(this.district_populations).concat(this.district_distance_averages.map(function(v,i,a){return "dist "+i+" avg dist: "+v().toFixed(3);}));
+			ret = ret.concat("total average distance: " + this.district_distance_averages.map(function(v,i,a){return v();}).reduce(function(x,y){return x+y;})/this.district_distance_averages.length);
 			ret = ret.concat(log_array);
 			
 			return ret;
@@ -231,6 +280,7 @@ function GetZipDistrictObject(zip_object, flips)
 		district_object.district_counts[i] = 0;
 		district_object.district_populations[i] = 0;
 		district_object.district_tot_distances[i] = SumOfDistances(zm, i);
+		district_object.district_distance_averages[i] = GetAverager(1000,100);
 	}
 	
 	district_object.total_population = 0;
@@ -258,7 +308,7 @@ function GetZipMapObject(zip_object, map_scale_factor, pop_rad_min, pop_rad_max)
 	
 	//var color = "#" + (Math.random()>0.5?"FF":"00")+ (Math.random()>0.5?"FF":"00")+ (Math.random()>0.5?"FF":"00");
 	//var color_arr = ["#FF0000","#00FF00","#0000FF"];
-	var color_arr = ["red", "lime", "blue","yellow", "orange", "purple","green", "slateblue"];
+	var color_arr = ["red", "blue","yellow", "lime", "orange", "purple","green", "slateblue"];
 	
 	zm.x = []; zm.y = []; zm.rad = []; zm.color = [];
 	for (var i = 0; i < zm.zip.length; i++)
@@ -341,14 +391,24 @@ function GetZipMapObject(zip_object, map_scale_factor, pop_rad_min, pop_rad_max)
 	return zip_map_object;
 };
 
+var sliders = $('<label for="temperature_slider">Temperature</label> <input type="range" id="temperature_slider" min="0" style="width: '+WIDTH+'px" max="2" step="0.000001" value="1" oninput="district_obj.temperature = this.value;" /> ');
+sliders.appendTo("body");
+
+// var state = "AR";
 var state = "OK";
+// var state = "IA";
 var districts = 5;
+var flips_per_update = 20;	
+var cooling_schedule = 20;			// drop by temperature_drop every cooling_schedule flips
+var initial_temperature = 1;
+var temperature_drop = 1/100000;
 
 var zip_obj = GetZipObject(state, districts);
-var district_obj = GetZipDistrictObject(zip_obj, 10);
-var map = GetZipMapObject(zip_obj,.9,7,30);
+var district_obj = GetZipDistrictObject(zip_obj, flips_per_update, initial_temperature, cooling_schedule, temperature_drop, $('#temperature_slider')[0]);
+var map = GetZipMapObject(zip_obj,.9,7,20);
+// var map = GetZipMapObject(zip_obj,.9,7,7);
 
 main_game.add_object(map);
 main_game.add_object(district_obj);
-
+main_game.run();
 
