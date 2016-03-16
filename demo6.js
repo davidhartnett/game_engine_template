@@ -116,7 +116,7 @@ function GetAverager(points_to_average, avg_val)
 	};
 }
 
-function GetZipDistrictObject(zip_object, flips, initial_temperature, cooling_schedule, temperature_drop, external_object)
+function GetZipDistrictObject(zip_object, flips, initial_temperature, cooling_rate, temperature_drop, external_object)
 {
 	var zm = zip_object;
 	
@@ -139,9 +139,9 @@ function GetZipDistrictObject(zip_object, flips, initial_temperature, cooling_sc
 	,	district_tot_distances:			[]
 	,	go_flag:						false
 	//,	stats:							{e_diff_tot:GetAverager(200,0),n_diff_tot:GetAverager(200,0), numerator_tot:GetAverager(200,0)}
-	,	e_diff_avg:						GetAverager(2000,0)
-	,	n_diff_avg:						GetAverager(2000,0)
-	,	numerator_avg:					GetAverager(2000,0)
+	,	e_diff_avg:						GetAverager(200,0)
+	,	n_diff_avg:						GetAverager(200,0)
+	,	numerator_avg:					GetAverager(200,0)
 	,	district_distance_averages:		[]
 	,	draw: function(context)
 		{
@@ -154,18 +154,18 @@ function GetZipDistrictObject(zip_object, flips, initial_temperature, cooling_sc
 			var new_district_populations = [];
 			var new_district_tot_distances = [];
 			
-			var log_array = [];
-			
-			while (this.cooling_counter >= cooling_schedule)
-			{
-				this.cooling_counter -= cooling_schedule;
-				this.temperature -= temperature_drop;
-				external_object.value = this.temperature;
-				if (this.temperature <= 0) this.temperature = 0;
-			}
+			var log_array = [];			
 			
 			for (var flip_counter = 0; flip_counter < flips; flip_counter++)
 			{
+				while (this.cooling_counter*cooling_rate >= 1)
+				{
+					this.cooling_counter -= 1/cooling_rate;
+					this.temperature -= temperature_drop;
+					external_object.value = this.temperature;
+					if (this.temperature <= 0) this.temperature = 0;
+				}
+				
 				// save old and change microscopics
 				var zm_index = Math.floor(zm.zip.length*Math.random());
 				
@@ -220,9 +220,9 @@ function GetZipDistrictObject(zip_object, flips, initial_temperature, cooling_sc
 				var n_diff =
 				Math.abs(this.ideal_population_per_district - new_district_populations[district_one]) + Math.abs(this.ideal_population_per_district - new_district_populations[district_two]) 
 				- Math.abs(this.ideal_population_per_district - this.district_populations[district_one]) - Math.abs(this.ideal_population_per_district - this.district_populations[district_two]);
-								
+				
 				// ^^ bad
-				var mu = 0.00002;
+				var mu = 0.00002*(1-this.temperature); mu = mu <= 0 ? 0 : mu;
 				var numerator = e_diff + mu*n_diff;
 				// also bad ^^. study gibbs energy
 				
@@ -230,14 +230,15 @@ function GetZipDistrictObject(zip_object, flips, initial_temperature, cooling_sc
 				
 				if (flip_counter == 0)
 				{
+					log_array.push("mu: " + mu);
 					log_array.push("avg e_diff: " + this.e_diff_avg(e_diff).toFixed(6));
-					log_array.push("avg n_diff: " + this.n_diff_avg(n_diff).toFixed(6));
+					log_array.push("avg mu*n_diff: " + this.n_diff_avg(mu*n_diff).toFixed(6));
 					log_array.push("avg numerator: " + this.numerator_avg(numerator).toFixed(6));
 				}
 				else
 				{
 					this.e_diff_avg(e_diff);
-					this.n_diff_avg(n_diff);
+					this.n_diff_avg(mu*n_diff);
 					this.numerator_avg(numerator);
 				}
 				
@@ -308,7 +309,7 @@ function GetZipMapObject(zip_object, map_scale_factor, pop_rad_min, pop_rad_max)
 	
 	//var color = "#" + (Math.random()>0.5?"FF":"00")+ (Math.random()>0.5?"FF":"00")+ (Math.random()>0.5?"FF":"00");
 	//var color_arr = ["#FF0000","#00FF00","#0000FF"];
-	var color_arr = ["red", "blue","yellow", "lime", "orange", "purple","green", "slateblue"];
+	var color_arr = ["red", "blue","yellow", "lime", "orange", "purple","green", "slateblue", "crimson","burlywood","gray", "fuchsia","lightseagreen","sandybrown", "sienna"];
 	
 	zm.x = []; zm.y = []; zm.rad = []; zm.color = [];
 	for (var i = 0; i < zm.zip.length; i++)
@@ -394,19 +395,20 @@ function GetZipMapObject(zip_object, map_scale_factor, pop_rad_min, pop_rad_max)
 var sliders = $('<label for="temperature_slider">Temperature</label> <input type="range" id="temperature_slider" min="0" style="width: '+WIDTH+'px" max="2" step="0.000001" value="1" oninput="district_obj.temperature = this.value;" /> ');
 sliders.appendTo("body");
 
-// var state = "AR";
-var state = "OK";
+// var state = "NV";
+var state = "AR";
+// var state = "OK";
 // var state = "IA";
-var districts = 5;
+var districts = 4;
 var flips_per_update = 20;	
-var cooling_schedule = 20;			// drop by temperature_drop every cooling_schedule flips
+var cooling_rate = 1/4;			// drop by temperature_drop every 1/cooling_rate flips
 var initial_temperature = 1;
 var temperature_drop = 1/100000;
 
 var zip_obj = GetZipObject(state, districts);
-var district_obj = GetZipDistrictObject(zip_obj, flips_per_update, initial_temperature, cooling_schedule, temperature_drop, $('#temperature_slider')[0]);
-var map = GetZipMapObject(zip_obj,.9,7,20);
-// var map = GetZipMapObject(zip_obj,.9,7,7);
+var district_obj = GetZipDistrictObject(zip_obj, flips_per_update, initial_temperature, cooling_rate, temperature_drop, $('#temperature_slider')[0]);
+// var map = GetZipMapObject(zip_obj,.9,7,20);
+var map = GetZipMapObject(zip_obj,.9,7,7);
 
 main_game.add_object(map);
 main_game.add_object(district_obj);
