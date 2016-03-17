@@ -222,7 +222,7 @@ function GetZipDistrictObject(zip_object, flips, initial_temperature, cooling_ra
 				- Math.abs(this.ideal_population_per_district - this.district_populations[district_one]) - Math.abs(this.ideal_population_per_district - this.district_populations[district_two]);
 				
 				// ^^ bad
-				var mu = 0.00002*(1-this.temperature); mu = mu <= 0 ? 0 : mu;
+				var mu = 0.00004*(1-this.temperature); mu = mu <= 0 ? 0 : mu;
 				var numerator = e_diff + mu*n_diff;
 				// also bad ^^. study gibbs energy
 				
@@ -267,8 +267,10 @@ function GetZipDistrictObject(zip_object, flips, initial_temperature, cooling_ra
 			
 			this.cooling_counter += flips;
 			
+			var ippd = this.ideal_population_per_district;
 			var ret = ["runs per interval: " + flip_counter, "districts: " + district_number, "total population: " + this.total_population, "ideal average: " + this.ideal_population_per_district, "temperature: " + this.temperature];
-			ret = ret.concat(this.district_counts).concat(this.district_populations).concat(this.district_distance_averages.map(function(v,i,a){return "dist "+i+" avg dist: "+v().toFixed(3);}));
+			ret = ret.concat(this.district_counts).concat(this.district_populations.map(function(v,i,a){return v + "   " + (100*(v-ippd)/ippd).toFixed(2) + "%";}));
+			ret = ret.concat(this.district_distance_averages.map(function(v,i,a){return "dist "+i+" avg_dist: "+v().toFixed(3);}));
 			ret = ret.concat("total average distance: " + this.district_distance_averages.map(function(v,i,a){return v();}).reduce(function(x,y){return x+y;})/this.district_distance_averages.length);
 			ret = ret.concat(log_array);
 			
@@ -396,10 +398,10 @@ var sliders = $('<label for="temperature_slider">Temperature</label> <input type
 sliders.appendTo("body");
 
 // var state = "NV";
-var state = "AR";
-// var state = "OK";
+// var state = "AR";
+var state = "OK";
 // var state = "IA";
-var districts = 4;
+var districts = 5;
 var flips_per_update = 20;	
 var cooling_rate = 1/4;			// drop by temperature_drop every 1/cooling_rate flips
 var initial_temperature = 1;
@@ -407,8 +409,8 @@ var temperature_drop = 1/100000;
 
 var zip_obj = GetZipObject(state, districts);
 var district_obj = GetZipDistrictObject(zip_obj, flips_per_update, initial_temperature, cooling_rate, temperature_drop, $('#temperature_slider')[0]);
-// var map = GetZipMapObject(zip_obj,.9,7,20);
-var map = GetZipMapObject(zip_obj,.9,7,7);
+var map = GetZipMapObject(zip_obj,0.7,4,20);
+// var map = GetZipMapObject(zip_obj,.9,7,7);
 
 main_game.add_object(map);
 main_game.add_object(district_obj);
